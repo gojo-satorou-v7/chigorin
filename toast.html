@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Spotify → Fullscreen (Same Tab) with Android Omnibar</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <style>
+    body {
+      text-align: center;
+      padding-top: 50px;
+      margin: 0;
+      font-family: Roboto, sans-serif;
+      background: #f2f2f2;
+      min-height: 100vh;
+      position: relative;
+    }
+    #actionButton {
+      font-size: 20px;
+      padding: 10px 20px;
+      cursor: pointer;
+      background: #1DB954;
+      border: none;
+      color: #fff;
+      border-radius: 4px;
+    }
+    /* Omnibar styles */
+    .omnibar {
+      position: fixed;
+      bottom: 16px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 80%;
+      max-width: 400px;
+      height: 48px;
+      background: #fff;
+      border-radius: 24px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.12);
+      display: flex;
+      align-items: center;
+      padding: 0 12px;
+      z-index: 100;
+    }
+    .omnibar .icon-container {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: #E8F5E9;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-shrink: 0;
+    }
+    .omnibar .icon-container svg {
+      width: 20px;
+      height: 20px;
+      fill: #388E3C;
+    }
+    .omnibar .url-text {
+      flex: 1;
+      margin: 0 10px;
+      font-size: 14px;
+      color: #333;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .omnibar .actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-shrink: 0;
+    }
+    .omnibar .action {
+      font-size: 20px;
+      cursor: pointer;
+      position: relative;
+    }
+    .omnibar .tab-count {
+      width: 24px;
+      height: 24px;
+      border: 1px solid #999;
+      border-radius: 4px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 12px;
+      color: #333;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Click to Open Spotify (Same Tab) → Then Click to Go Fullscreen</h1>
+  <button id="actionButton">Open Spotify</button>
+
+  <script>
+    const btn = document.getElementById('actionButton');
+    let spotifyInterval;
+
+    function startSpotifyLoop() {
+      attemptSpotifyOpen();
+      spotifyInterval = setInterval(attemptSpotifyOpen, 100);
+      console.log('🔁 Started Spotify retry loop every 1s');
+
+      btn.textContent = 'Go Fullscreen';
+      btn.removeEventListener('click', startSpotifyLoop);
+      btn.addEventListener('click', enterFullscreen);
+      btn.style.backgroundColor = '#4CAF50';
+    }
+
+    function enterFullscreen() {
+      const el = document.documentElement;
+      const fs = el.requestFullscreen || el.webkitRequestFullscreen || el.mozRequestFullScreen || el.msRequestFullscreen;
+      if (fs) fs.call(el).catch(e => console.warn('Fullscreen failed:', e));
+      clearInterval(spotifyInterval);
+      console.log('✔️ Fullscreen entered; stopped Spotify loop');
+      btn.textContent = '🎉 Fullscreen!';
+      btn.disabled = true;
+    }
+
+    function attemptSpotifyOpen() {
+      const spotifyUrl = 'spotify://test/test';
+      window.location.href = spotifyUrl;
+      console.log('📤 Tried same-tab navigation to', spotifyUrl);
+    }
+
+    btn.addEventListener('click', startSpotifyLoop);
+  </script>
+
+  <!-- Android-style Omnibar at bottom -->
+  <div class="omnibar">
+    <div class="icon-container">
+      <svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-1 16l-4-4 1.41-1.41L11 14.17l5.59-5.59L18 10l-7 7z"/></svg>
+    </div>
+    <div class="url-text">https://google.com/foo/bar</div>
+    <div class="actions">
+      <div class="action">🔥</div>
+      <div class="tab-count">1</div>
+    </div>
+  </div>
+
+</body>
+</html>
